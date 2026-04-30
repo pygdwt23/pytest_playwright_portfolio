@@ -1,0 +1,6 @@
+{
+  "base_url": "https://automationexercise.com/",
+  "browser": "brave",
+  "headless": false,
+  "timeout": 5000
+}
