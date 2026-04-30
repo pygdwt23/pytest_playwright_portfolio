@@ -40,7 +40,8 @@ class WordGenerator:
     def add_screenshot_with_description(self, doc, text, image):
         path = 'screenshots/'
         now = datetime.now()
-        date = now.strftime("%d %m %Y, %Y %H:%M:%S")
+        date = now.strftime("%d-%m-%Y - %H.%M.%S")
+        image = f"{date}_{image}"
         p = doc.add_paragraph()
         p.add_run(text)
         p.paragraph_format.keep_together = True
@@ -55,7 +56,14 @@ class WordGenerator:
 
     def add_screenshot_only(self, doc, image):
         path = 'screenshots/'
+        now = datetime.now()
+        date = now.strftime("%d-%m-%Y - %H.%M.%S")
+        image = f"{date}_{image}"
         self.page.screenshot(path=f"{path} {image}", full_page=True)
+        imgdraw = Image.open(f"{path} {image}")
+        drawing = ImageDraw.Draw(imgdraw)
+        drawing.text((10, imgdraw.height - 25), date, fill=(255, 0, 0))
+        imgdraw.save(f"{path} {image}")
         doc.add_picture(f"{path} {image}", width=Cm(19))
         return doc
 

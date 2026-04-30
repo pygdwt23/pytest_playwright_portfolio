@@ -13,7 +13,7 @@ import random
 fake = Faker()
 
 output_data_path = './testdata/testdata_input.xlsx'
-sheet_name = 'registration'
+sheet_name = 'end_to_end'
 logging = logging.getLogger(__name__)
 
 
@@ -23,7 +23,7 @@ def read_test_data():
     return df.to_dict(orient='records')
 
 @pytest.mark.parametrize("test_data", read_test_data(), ids=lambda x: x.get("testcase_id", "unknown"))
-def test_create_new_account(page, test_data):
+def test_end_to_end(page, test_data):
     document = ""
 
     testcase = test_data["testcase_id"]
@@ -38,76 +38,13 @@ def test_create_new_account(page, test_data):
         name = test_data["name"]
         email = test_data["email"]
         password = test_data["password"]
-        title = test_data["title"]
-        dob = test_data["dob"]
-        newsletter = test_data["newsletter"]
-        offers = test_data["offers"]
-        firstname = test_data["firstname"]
-        lastname = test_data["lastname"]
-        company = test_data["company"]
-        address = test_data["address"]
-        country = test_data["country"]
-        state = test_data["state"]
-        zipcode = test_data["zipcode"]
-        mobile = test_data["mobile"]
 
-
-        #=== Data Generation ===#
-        if name == "":
-            if title == "Mr":
-                name = fake.last_name_male()
-            else:
-                name = fake.last_name_female()
-
-        dummy_email = fake.email()
-
-        random_num = random.randint(100, 999)
-
-        if password == "":
-            password = fake.password(length=10, special_chars=True, digits=True, upper_case=True, lower_case=True)
-        if dob == "":
-            dob = fake.date(pattern="%d/%m/%Y")
-            dob = datetime.strptime(dob, "%d/%m/%Y")
-        birth_date = dob.strftime("%d")
-        birth_month = dob.strftime("%B")
-        birth_year = dob.strftime("%Y")
-        logging.info(f"Date of birth: {birth_date} / {birth_month} / {birth_year}")
-
-        if firstname == "":
-            if title == "Mr":
-                firstname = fake.first_name_male()
-            else:
-                firstname = fake.first_name_female()
-        if lastname == "":
-            lastname = name
-
-        if email == "":
-            email = f"{firstname}{lastname}{random_num}@tester.com"
-
-        if company == "":
-            company = fake.company()
-
-        if address == "":
-            address = fake.address()
-
-        if country == "":
-            country = ["India", "Australia", "Canada", "New Zealand", "Singapore"]
-            country = fake.random_element(elements=country)
-
-        if state == "":
-            state = fake.state()
-
-        if zipcode == "":
-            zipcode = fake.postcode()
-
-        if mobile == "":
-            mobile = fake.phone_number()
 
         #=== Steps ===#
         document = WordGenerator.start_document(page)
         auth_page = AuthPage(page)
-        auth_page.signup(name, email, document)
-        firstname, lastname, company, address, state, zipcode, mobile = auth_page.app_form(password, title, birth_date, birth_month, birth_year, newsletter, offers, firstname, lastname, company, address, country, state, zipcode, mobile, email, document)
+        # auth_page.login(name, email, password, document)
+        auth_page.login_alt(name, email, password, document)
 
 
         # ===[ Write to Excel ]===
@@ -140,7 +77,7 @@ def test_create_new_account(page, test_data):
     finally:
         now = datetime.now()
         now = now.strftime("%d-%m-%Y_%H-%M-%S")
-        doc_report_name = f"reports/[REPORT] ACCOUNT REGISTRATION - {now} - {remarks}.docx"
+        doc_report_name = f"reports/[REPORT] [{testcase}] END TO END - {now} - {remarks}.docx"
         document.save(doc_report_name)
         doc = docx.Document(doc_report_name)
         doc.save(doc_report_name)

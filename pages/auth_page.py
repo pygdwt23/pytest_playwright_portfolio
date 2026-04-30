@@ -39,6 +39,7 @@ class AuthPage:
         self.EMAIL_LOGIN_FIELD = page.locator('[data-qa="login-email"]')
         self.PASSWORD_LOGIN_FIELD = page.locator('[data-qa="login-password"]')
         self.LOGIN_BTN = page.locator('[data-qa="login-button"]')
+        self.ERROR_LOGIN_MSG = page.locator('//p[normalize-space()="Your email or password is incorrect!"]')
 
 
     def signup(self, name, email, document):
@@ -59,25 +60,66 @@ class AuthPage:
             logging.error(f"Error during signup: {e}")
             raise e
 
-    def login(self, name, email, password, document):
+    def login_alt(self, name, email, password, document):
         WordGenerator.add_heading(self, document, "Login Process", 2)
+
         try:
             self.ui.click(self.LOGIN_LINK)
             logging.info("Clicking Signup / Login link")
+
+            # ── Blank data cases ──────────────────────────────
+            blank_cases = [
+                ("Login Blank Data", "", "", "login-email"),
+                ("Login Blank Email", "", password, "login-email"),
+                ("Login Blank Password", email, "", "login-password"),
+            ]
+
+            for label, em, pw, field in blank_cases:
+                self.ui.fill(self.EMAIL_LOGIN_FIELD, em)
+                self.ui.fill(self.PASSWORD_LOGIN_FIELD, pw)
+                self.ui.click(self.LOGIN_BTN)
+
+                is_valid = self.page.evaluate(
+                    f"document.querySelector('input[data-qa=\"{field}\"]').validity.valueMissing"
+                )
+                assert is_valid, f"[{label}] Expected valueMissing=True"
+                logging.info(f"{label}: validation passed")
+                WordGenerator.add_screenshot_with_description(self, document, label, "login.png")
+
+            # ── Invalid data cases ────────────────────────────
+            expected_error = "Your email or password is incorrect!"
+
+            invalid_cases = [
+                ("Login Invalid Data", f"{email}123", f"{password}123"),
+                ("Login Invalid Email", f"{email}123", password),
+                ("Login Invalid Password", email, f"{password}123"),
+            ]
+
+            for label, em, pw in invalid_cases:
+                self.ui.fill(self.EMAIL_LOGIN_FIELD, em)
+                self.ui.fill(self.PASSWORD_LOGIN_FIELD, pw)
+                self.ui.click(self.LOGIN_BTN)
+
+                actual_error = self.ui.get_text(self.ERROR_LOGIN_MSG)
+                assert actual_error == expected_error, \
+                    f"[{label}] Expected: '{expected_error}', Got: '{actual_error}'"
+                logging.info(f"{label}: error message validated")
+                WordGenerator.add_screenshot_with_description(self, document, label, "login.png")
+
+            # ── Valid login ───────────────────────────────────
             self.ui.fill(self.EMAIL_LOGIN_FIELD, email)
-            logging.info(f"Filling login email: {email}")
             self.ui.fill(self.PASSWORD_LOGIN_FIELD, password)
-            logging.info(f"Filling login password: ********")
             WordGenerator.add_screenshot_with_description(self, document, "Login Data", "login.png")
             self.ui.click(self.LOGIN_BTN)
             logging.info("Clicking Login button")
 
             user_text = self.ui.get_text(self.LOGGED_IN_ACCOUNT)
-            assert name in user_text
-            WordGenerator.add_screenshot_with_description(self, document, f"{user_text}", "login.png")
+            assert name in user_text, f"Expected '{name}' in '{user_text}'"
+            WordGenerator.add_screenshot_with_description(self, document, user_text, "login.png")
+
         except Exception as e:
             logging.error(f"Error during login: {e}")
-            WordGenerator.add_heading_fail(self, document, f"FAIL", 3)
+            WordGenerator.add_heading_fail(self, document, "FAIL", 3)
             WordGenerator.add_screenshot_only(self, document, "login_error.png")
             raise e
 
