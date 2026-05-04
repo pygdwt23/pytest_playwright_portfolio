@@ -105,5 +105,11 @@ class WordGenerator:
             os.remove(file)
         logging.info("Temporary Word documents cleared.")
 
+    @staticmethod
+    def clear_downloaded_files(path):
+        for file in glob.glob(f"{path}*.*)"):
+            os.remove(file)
+        logging.info("Temporary downloaded files cleared.")
+
 
 

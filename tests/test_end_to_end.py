@@ -12,10 +12,14 @@ from utils.ui_actions import UIActions
 from utils.word_generator import WordGenerator
 from faker import Faker
 import random
+from pathlib import Path
+
 fake = Faker()
 
 output_data_path = './testdata/testdata_input.xlsx'
 sheet_name = 'end_to_end'
+PROJECT_ROOT = Path(__file__).parent.parent
+DOWNLOAD_DIR = PROJECT_ROOT / "downloads"
 logging = logging.getLogger(__name__)
 
 
@@ -34,6 +38,7 @@ def test_end_to_end(page, test_data):
 
     WordGenerator.clear_temp_screenshot(path="screenshots/")
     WordGenerator.clear_temp_words(path="reports/")
+    WordGenerator.clear_downloaded_files(path=DOWNLOAD_DIR)
 
     try:
         #=== Test Data ===#
