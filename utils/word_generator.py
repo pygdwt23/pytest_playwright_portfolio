@@ -15,8 +15,13 @@ class WordGenerator:
     def __init__(self, page: Page):
         self.page = page
 
-    def start_document(self):
+    def start_document(self, test_data):
         report_title = f"Report".upper()
+
+        # === Test Data ===#
+        name = test_data["name"]
+        email = test_data["email"]
+
         doc = Document()
         sections = doc.sections
         for section in sections:
@@ -31,9 +36,12 @@ class WordGenerator:
         p = doc.add_heading(report_title, 0)
         p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         p.bold = True
-        doc.add_heading(report_title, 1)
+        p = doc.add_heading("SUMMARY", 1)
+        p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         p = doc.add_paragraph()
-        p.add_run(f"Generated on: {start}").italic = True
+        p.add_run(f"\nTest Started      : {start}")
+        p.add_run(f"\nName              : {name}")
+        p.add_run(f"\nEmail             : {email}")
 
         return doc
 

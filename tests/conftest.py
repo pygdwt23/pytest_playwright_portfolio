@@ -1,9 +1,11 @@
 import pytest
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 from utils.config_loader import ConfigLoader
 
 brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-
+PROJECT_ROOT = Path(__file__).parent.parent
+DOWNLOAD_DIR = PROJECT_ROOT / "downloads"
 
 @pytest.fixture(scope="session")
 def config():
@@ -31,12 +33,14 @@ def browser(playwright_instance, config):
 
 @pytest.fixture
 def context(browser, config):
+    DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     context = browser.new_context(
         base_url=config["base_url"],
         viewport={"width": 2560, "height": 1440},
         # viewport=None,
         java_script_enabled=True,
         ignore_https_errors=True,
+        accept_downloads=True,
     )
     context.set_default_timeout(30_000)
     context.set_default_navigation_timeout(60_000)  # khusus navigasi
@@ -46,6 +50,13 @@ def context(browser, config):
 @pytest.fixture
 def page(context, config):
     page = context.new_page()
+
+    def handle_download(download):
+        save_path = DOWNLOAD_DIR / download.suggested_filename
+        download.save_as(save_path)
+
+    page.on("download", handle_download)
+    
     page.goto("/", wait_until="domcontentloaded")
     # page.set_default_timeout(config["timeout"])
     yield page

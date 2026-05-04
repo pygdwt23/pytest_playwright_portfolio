@@ -206,3 +206,15 @@ class AuthPage:
             WordGenerator.add_heading_fail(self, document, f"FAIL", 3)
             WordGenerator.add_screenshot_with_description(self, document,f"{e}", "account_deletion_error.png")
             raise e
+
+    def log_out(self, document):
+        WordGenerator.add_heading(self, document, "Logout Process", 2)
+        try:
+            self.ui.click(self.LOGOUT_BTN)
+            logging.info("Clicking Logout button")
+            WordGenerator.add_screenshot_with_description(self, document, "Logged Out", "logout.png")
+        except Exception as e:
+            logging.error(f"Error during logout: {e}")
+            WordGenerator.add_heading_fail(self, document, f"FAIL", 3)
+            WordGenerator.add_screenshot_with_description(self, document,f"{e}", "logout_error.png")
+            raise e

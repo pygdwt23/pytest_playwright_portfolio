@@ -6,6 +6,8 @@ import pytest
 import pandas as pd
 import openpyxl
 from pages.auth_page import AuthPage
+from pages.product_page import ProductPage
+from pages.payment_page import PaymentPage
 from utils.ui_actions import UIActions
 from utils.word_generator import WordGenerator
 from faker import Faker
@@ -38,13 +40,28 @@ def test_end_to_end(page, test_data):
         name = test_data["name"]
         email = test_data["email"]
         password = test_data["password"]
+        product_name = test_data["product_name"]
+        comment = test_data["comment"]
+        cc_number = test_data["cc_number"]
+        cc_name = test_data["cc_name"]
+        cc_cvv = test_data["cc_cvv"]
+        cc_exp_month = test_data["cc_exp_month"]
+        cc_exp_year = test_data["cc_exp_year"]
 
 
         #=== Steps ===#
-        document = WordGenerator.start_document(page)
+        document = WordGenerator.start_document(page, test_data)
         auth_page = AuthPage(page)
         # auth_page.login(name, email, password, document)
         auth_page.login_alt(name, email, password, document)
+
+        product_page = ProductPage(page)
+        product_page.buy_product_by_search(product_name, comment, document)
+
+        payment_page = PaymentPage(page)
+        payment_page.pay_and_confirm(document, cc_name, cc_number, cc_cvv, cc_exp_month, cc_exp_year)
+
+        auth_page.log_out(document)
 
 
         # ===[ Write to Excel ]===

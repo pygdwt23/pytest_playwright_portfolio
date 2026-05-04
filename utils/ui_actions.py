@@ -29,6 +29,11 @@ class UIActions:
     def click_force(self, locator):
         locator.click(force=True)
 
+    def javascript_click(self, locator):
+        element = locator
+        element.wait_for(state="visible")
+        element.evaluate("el => el.click()")
+
     def smooth_scroll(self, locator):
         element = locator
         element.wait_for(state="visible")
