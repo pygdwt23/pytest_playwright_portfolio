@@ -22,12 +22,43 @@ class ProductPage:
         self.PROCEED_TO_CHECKOUT_BTN = page.get_by_text("Proceed To Checkout", exact=True)
         self.COMMENT_BOX = page.locator("[name='message']")
         self.PLACE_ORDER_BTN = page.get_by_role("link", name="Place Order")
+        self.WOMEN_CATEGORY_OPT = page.locator("//a[normalize-space()='Women']//i[@class='fa fa-plus']")
+        self.MEN_CATEGORY_OPT = page.get_by_role('heading', name='Men', level=4)
+        self.KIDS_CATEGORY_OPT = page.get_by_role('heading', name='Kids', level=4)
+        self.DRESS_LINK = page.get_by_role('link', name='Dress')
+        self.KIDS_TOPS_LINK = page.get_by_role('link', name='Tops & Shirts')
+        self.WOMEN_TOPS_LINK = page.get_by_role('link', name='Tops')
+        self.WOMEN_SAREE_LINK = page.get_by_role('link', name='Saree')
+        self.MEN_TSHIRT_LINK = page.get_by_role('link', name='Tshirts')
+        self.MEN_JEANS_LINK = page.get_by_role('link', name='Jeans')
+        self.POLO_LINK = page.get_by_role('link', name='Polo')
+        self.H_AND_M_LINK = page.get_by_role('link', name='H&M')
+        self.MADAME_LINK = page.get_by_role('link', name='Madame')
+        self.MAST_HARBOUR_LINK = page.get_by_role('link', name='Mast & Harbour')
+        self.BABYHUG_LINK = page.get_by_role('link', name='Babyhug')
+        self.ALLEN_SOLLY_LINK = page.get_by_role('link', name='Allen Solly Junior')
+        self.KOOKIE_LINK = page.get_by_role('link', name='Kookie Kids')
+        self.BIBA_LINK = page.get_by_role('link', name='Biba')
+        self.SLEEVELESS_DRESS_LINK = page.locator('//div[@class="overlay-content"]//p[.="Sleeveless Dress"]/following::a[.="Add to cart"][1]')
+        self.DELETE_CART_LINK = page.locator("//i[@class='fa fa-times']")
+        self.EMPTY_CART_MSG = page.locator('//b[normalize-space()="Cart is empty!"]')
 
 
-    def buy_product_by_search(self, product_name, comment, document):
-        WordGenerator.add_heading(self, document, "Buying Product by Search", level=2)
+
+    def click_product_link(self, document):
         try:
             self.ui.click(self.PRODUCT_LINK)
+            logging.info("Click on product link")
+        except Exception as e:
+            logging.error(e)
+            WordGenerator.add_heading_fail(self, document, "Failed to click product link", level=2)
+            WordGenerator.add_screenshot_only(self, document, "product_link_error.png")
+            raise e
+
+    def buy_product_by_search(self, product_name, document):
+        WordGenerator.add_heading(self, document, "Buying Product by Search", level=2)
+        try:
+            self.click_product_link(document)
             logging.info("Click on product link")
             self.ui.fill(self.SEARCH_FIELD, product_name)
             logging.info(f"Fill search field with {product_name}")
@@ -36,10 +67,28 @@ class ProductPage:
             logging.info("Click on search button")
             self.ui.javascript_click(self.ADD_TO_CART_BTN)
             logging.info("Click on cart button")
+        except Exception as e:
+            logging.error(e)
+            WordGenerator.add_heading_fail(self, document, "Failed to buy product by search", level=2)
+            WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
+            raise e
+
+    def verify_added_to_cart(self, document):
+        WordGenerator.add_heading(self, document, "Add to cart", level=2)
+        try:
             self.ui.should_be_visible(self.ADD_TO_CART_SUCCESS_MSG)
             WordGenerator.add_screenshot_only(self, document, "add_to_cart.png")
             self.ui.click(self.VIEW_CART_LINK)
-            logging.info("Click on cart button")
+            logging.info("Click on view cart link")
+        except Exception as e:
+            logging.error(e)
+            WordGenerator.add_heading_fail(self, document, "Failed to view cart link", level=2)
+            WordGenerator.add_screenshot_only(self, document, "view_cart.png")
+            raise e
+
+    def proceed_to_checkout(self, document, comment):
+        WordGenerator.add_heading(self, document, "Proceed to checkout", level=2)
+        try:
             self.ui.should_be_visible(self.PROCEED_TO_CHECKOUT_BTN)
             WordGenerator.add_screenshot_only(self, document, "proceed_to_checkout.png")
             self.ui.click(self.PROCEED_TO_CHECKOUT_BTN)
@@ -49,9 +98,59 @@ class ProductPage:
             WordGenerator.add_screenshot_only(self, document, "comment.png")
             self.ui.click(self.PLACE_ORDER_BTN)
             logging.info("Click on place order button")
-            WordGenerator.add_screenshot_with_description(self,document, "Product added to cart and proceeded to checkout", "product_page.png")
+            WordGenerator.add_screenshot_with_description(self, document,
+                                                          "Product added to cart and proceeded to checkout",
+                                                          "product_page.png")
         except Exception as e:
             logging.error(e)
-            WordGenerator.add_heading_fail(self, document, "Failed to buy product by search", level=2)
+            WordGenerator.add_heading_fail(self, document, "Failed to place order button", level=2)
+            WordGenerator.add_screenshot_only(self, document, "place_order.png")
+            raise e
+
+    def buy_product_by_category(self, category, subcategory, document):
+        WordGenerator.add_heading(self, document, "Buying Product by Category", level=2)
+        try:
+            self.click_product_link(document)
+            if category == "women":
+                self.ui.javascript_click(self.WOMEN_CATEGORY_OPT)
+                logging.info(f"Click on {category} category option")
+                if subcategory == "dress":
+                    self.ui.click(self.DRESS_LINK)
+                    logging.info(f"Click on {subcategory} subcategory option")
+                    self.ui.javascript_click(self.SLEEVELESS_DRESS_LINK)
+                    logging.info(f"Added Sleeveless Dress to cart")
+                elif subcategory == "tops":
+                    self.ui.click(self.WOMEN_TOPS_LINK)
+                    logging.info(f"Click on {subcategory} subcategory option")
+                elif subcategory == "saree":
+                    self.ui.click(self.WOMEN_SAREE_LINK)
+                    logging.info(f"Click on {subcategory} subcategory option")
+                else:
+                    logging.warning(f"{subcategory} subcategory option not found")
+            elif category == "men":
+                self.ui.click(self.MEN_CATEGORY_OPT)
+                logging.info(f"Click on {category} category option")
+                if subcategory == "tshirt":
+                    self.ui.click(self.MEN_TSHIRT_LINK)
+                    logging.info(f"Click on {subcategory} subcategory option")
+                elif subcategory == "jeans":
+                    self.ui.click(self.MEN_JEANS_LINK)
+                    logging.info(f"Click on {subcategory} subcategory option")
+                else:
+                    logging.warning(f"{subcategory} subcategory option not found")
+            elif category == "kids":
+                self.ui.click(self.KIDS_CATEGORY_OPT)
+                logging.info(f"Click on {category} category option")
+                if subcategory == "tops":
+                    self.ui.click(self.KIDS_TOPS_LINK)
+                    logging.info(f"Click on {subcategory} subcategory option")
+                elif subcategory == "dress":
+                    self.ui.click(self.DRESS_LINK)
+                    logging.info(f"Click on {subcategory} subcategory option")
+                else:
+                    logging.warning(f"{subcategory} subcategory option not found")
+        except Exception as e:
+            logging.error(e)
+            WordGenerator.add_heading_fail(self, document, "Failed to buy product by category", level=2)
             WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
             raise e

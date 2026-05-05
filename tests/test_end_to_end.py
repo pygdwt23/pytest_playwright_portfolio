@@ -52,6 +52,10 @@ def test_end_to_end(page, test_data):
         cc_cvv = test_data["cc_cvv"]
         cc_exp_month = test_data["cc_exp_month"]
         cc_exp_year = test_data["cc_exp_year"]
+        feature = test_data["feature"]
+        category = test_data["category"]
+        subcategory = test_data["subcategory"]
+        brand = test_data["brand"]
 
 
         #=== Steps ===#
@@ -61,7 +65,15 @@ def test_end_to_end(page, test_data):
         auth_page.login_alt(name, email, password, document)
 
         product_page = ProductPage(page)
-        product_page.buy_product_by_search(product_name, comment, document)
+        if feature == "search product":
+            product_page.buy_product_by_search(product_name, document)
+        elif feature == "product category":
+            product_page.buy_product_by_category(category, subcategory, document)
+        elif feature == "product brand":
+            logging.warning("Not implemented yet.")
+
+        product_page.verify_added_to_cart(document)
+        product_page.proceed_to_checkout(document, comment)
 
         payment_page = PaymentPage(page)
         payment_page.pay_and_confirm(document, cc_name, cc_number, cc_cvv, cc_exp_month, cc_exp_year)
