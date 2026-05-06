@@ -70,7 +70,7 @@ def test_end_to_end(page, test_data):
         elif feature == "product category":
             product_page.buy_product_by_category(category, subcategory, document)
         elif feature == "product brand":
-            logging.warning("Not implemented yet.")
+            product_page.buy_product_by_brand(brand, document)
 
         product_page.verify_added_to_cart(document)
         product_page.proceed_to_checkout(document, comment)

@@ -40,6 +40,7 @@ class ProductPage:
         self.KOOKIE_LINK = page.get_by_role('link', name='Kookie Kids')
         self.BIBA_LINK = page.get_by_role('link', name='Biba')
         self.SLEEVELESS_DRESS_LINK = page.locator('//div[@class="overlay-content"]//p[.="Sleeveless Dress"]/following::a[.="Add to cart"][1]')
+        self.PREMIUM_POLO_TSHIRTS = page.locator('//div[@class="overlay-content"]//p[.="Premium Polo T-Shirts"]/following::a[.="Add to cart"][1]')
         self.DELETE_CART_LINK = page.locator("//i[@class='fa fa-times']")
         self.EMPTY_CART_MSG = page.locator('//b[normalize-space()="Cart is empty!"]')
 
@@ -152,5 +153,43 @@ class ProductPage:
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to buy product by category", level=2)
+            WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
+            raise e
+
+    def buy_product_by_brand(self, brand, document):
+        WordGenerator.add_heading(self, document, "Buying Product by Brand", level=2)
+        try:
+            self.click_product_link(document)
+            if brand == "h&m":
+                self.ui.click(self.H_AND_M_LINK)
+                logging.info(f"Click on {brand} brand option")
+            elif brand == "polo":
+                self.ui.click(self.POLO_LINK)
+                logging.info(f"Click on {brand} brand option")
+                self.ui.javascript_click(self.PREMIUM_POLO_TSHIRTS)
+                logging.info(f"Added Premium Polo T-Shirts to cart")
+            elif brand == "madame":
+                self.ui.click(self.MADAME_LINK)
+                logging.info(f"Click on {brand} brand option")
+            elif brand == "mast & harbour":
+                self.ui.click(self.MAST_HARBOUR_LINK)
+                logging.info(f"Click on {brand} brand option")
+            elif brand == "babyhug":
+                self.ui.click(self.BABYHUG_LINK)
+                logging.info(f"Click on {brand} brand option")
+            elif brand == "allen solly junior":
+                self.ui.click(self.ALLEN_SOLLY_LINK)
+                logging.info(f"Click on {brand} brand option")
+            elif brand == "kookie kids":
+                self.ui.click(self.KOOKIE_LINK)
+                logging.info(f"Click on {brand} brand option")
+            elif brand == "biba":
+                self.ui.click(self.BIBA_LINK)
+                logging.info(f"Click on {brand} brand option")
+            else:
+                logging.warning(f"{brand} brand option not found")
+        except Exception as e:
+            logging.error(e)
+            WordGenerator.add_heading_fail(self, document, "Failed to buy product by brand", level=2)
             WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
             raise e
