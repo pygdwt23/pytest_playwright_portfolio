@@ -56,6 +56,7 @@ def test_end_to_end(page, test_data):
         category = test_data["category"]
         subcategory = test_data["subcategory"]
         brand = test_data["brand"]
+        cart = test_data["cart"]
 
 
         #=== Steps ===#
@@ -73,10 +74,14 @@ def test_end_to_end(page, test_data):
             product_page.buy_product_by_brand(brand, document)
 
         product_page.verify_added_to_cart(document)
-        product_page.proceed_to_checkout(document, comment)
 
-        payment_page = PaymentPage(page)
-        payment_page.pay_and_confirm(document, cc_name, cc_number, cc_cvv, cc_exp_month, cc_exp_year)
+        if cart != "remove":
+            product_page.proceed_to_checkout(document, comment)
+
+            payment_page = PaymentPage(page)
+            payment_page.pay_and_confirm(document, cc_name, cc_number, cc_cvv, cc_exp_month, cc_exp_year)
+        else:
+            product_page.delete_from_cart(document)
 
         auth_page.log_out(document)
 

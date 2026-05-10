@@ -81,6 +81,7 @@ class ProductPage:
             WordGenerator.add_screenshot_only(self, document, "add_to_cart.png")
             self.ui.click(self.VIEW_CART_LINK)
             logging.info("Click on view cart link")
+            WordGenerator.add_screenshot_with_description(self, document, "Product added to cart successfully", "cart_page.png")
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to view cart link", level=2)
@@ -191,5 +192,19 @@ class ProductPage:
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to buy product by brand", level=2)
+            WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
+            raise e
+
+    def delete_from_cart(self, document):
+        try:
+            WordGenerator.add_heading(self, document, "Deleting from cart", level=2)
+            self.ui.javascript_click(self.DELETE_CART_LINK)
+            logging.info(f"Click on delete cart button")
+            self.ui.should_be_visible(self.EMPTY_CART_MSG)
+            empty_cart_msg = self.ui.get_text(self.EMPTY_CART_MSG)
+            WordGenerator.add_screenshot_with_description(self, document, f"{empty_cart_msg}", "delete_from_cart.png")
+        except Exception as e:
+            logging.error(e)
+            WordGenerator.add_heading_fail(self, document, "Failed to delete from cart", level=2)
             WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
             raise e

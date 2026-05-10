@@ -23,6 +23,18 @@ def browser(playwright_instance, config):
             headless=config["headless"],
             slow_mo=300
         )
+    elif config["browser"] == "chrome":
+        browser = getattr(playwright_instance, "chromium").launch(
+            channel="chrome",  # pake channel, bukan executable_path
+            headless=config["headless"],
+            slow_mo=300
+        )
+    elif config["browser"] == "edge":
+        browser = getattr(playwright_instance, "chromium").launch(
+            channel="msedge",  # sama, chromium engine
+            headless=config["headless"],
+            slow_mo=300
+        )
     else:
         browser = getattr(playwright_instance, config["browser"]).launch(
             headless=config["headless"],
