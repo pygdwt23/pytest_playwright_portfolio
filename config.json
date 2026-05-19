@@ -1,6 +1,6 @@
 {
   "base_url": "https://automationexercise.com/",
-  "browser": "edge",
-  "headless": false,
+  "browser": "chrome",
+  "headless": true,
   "timeout": 5000
 }
