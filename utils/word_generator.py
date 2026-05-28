@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import glob
+import allure
 from docx import Document
 from docx.shared import Inches, Pt, Cm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -45,7 +46,7 @@ class WordGenerator:
 
         return doc
 
-    def add_screenshot_with_description(self, doc, text, image):
+    def add_screenshot_with_description(self, doc, text, image, allure_attach=False):
         path = 'screenshots/'
         now = datetime.now()
         date = now.strftime("%d-%m-%Y - %H.%M.%S")
@@ -60,9 +61,13 @@ class WordGenerator:
         drawing.text((10, imgdraw.height -25), date, fill=(255, 0, 0))
         imgdraw.save(f"{path} {image}")
         doc.add_picture(f"{path} {image}", width=Cm(19))
+
+        if allure_attach:
+            with open(f"{path} {image}", "rb") as f:
+                allure.attach(f.read(), name=image, attachment_type=allure.attachment_type.PNG)
         return doc
 
-    def add_screenshot_only(self, doc, image):
+    def add_screenshot_only(self, doc, image, allure_attach=False):
         path = 'screenshots/'
         now = datetime.now()
         date = now.strftime("%d-%m-%Y - %H.%M.%S")
@@ -73,6 +78,10 @@ class WordGenerator:
         drawing.text((10, imgdraw.height - 25), date, fill=(255, 0, 0))
         imgdraw.save(f"{path} {image}")
         doc.add_picture(f"{path} {image}", width=Cm(19))
+
+        if allure_attach:
+            with open(f"{path} {image}", "rb") as f:
+                allure.attach(f.read(), name=image, attachment_type=allure.attachment_type.PNG)
         return doc
 
     def add_heading(self, doc, text, level):

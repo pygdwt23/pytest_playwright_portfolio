@@ -33,15 +33,15 @@ class PaymentPage:
             logging.info(f"Fill expiration month field with {cc_exp_month}")
             self.ui.fill(self.CC_EXP_YEAR_FIELD, cc_exp_year)
             logging.info(f"Fill expiration year field with {cc_exp_year}")
-            WordGenerator.add_screenshot_only(self, document, "payment_filled.png")
+            WordGenerator.add_screenshot_only(self, document, "payment_filled.png", True)
             self.ui.click(self.PAY_AND_CONFIRM_BTN)
             logging.info("Click on pay and confirm button")
             self.ui.should_be_visible(self.ORDER_SUCCESS_MSG)
-            WordGenerator.add_screenshot_only(self, document, "order_confirmed.png")
+            WordGenerator.add_screenshot_only(self, document, "order_confirmed.png", True)
             self.ui.click(self.DOWNLOAD_INVOICE_BTN)
             logging.info("Click on download invoice button")
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to pay and confirm order", level=2)
-            WordGenerator.add_screenshot_only(self, document, "payment_failed.png")
+            WordGenerator.add_screenshot_only(self, document, "payment_failed.png", True)
             raise e

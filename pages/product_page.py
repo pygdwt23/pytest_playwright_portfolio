@@ -53,7 +53,7 @@ class ProductPage:
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to click product link", level=2)
-            WordGenerator.add_screenshot_only(self, document, "product_link_error.png")
+            WordGenerator.add_screenshot_only(self, document, "product_link_error.png", True)
             raise e
 
     def buy_product_by_search(self, product_name, document):
@@ -63,7 +63,7 @@ class ProductPage:
             logging.info("Click on product link")
             self.ui.fill(self.SEARCH_FIELD, product_name)
             logging.info(f"Fill search field with {product_name}")
-            WordGenerator.add_screenshot_only(self, document, "search_filled.png")
+            WordGenerator.add_screenshot_only(self, document, "search_filled.png", True)
             self.ui.click(self.SEARCH_BTN)
             logging.info("Click on search button")
             self.ui.javascript_click(self.ADD_TO_CART_BTN)
@@ -71,42 +71,42 @@ class ProductPage:
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to buy product by search", level=2)
-            WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
+            WordGenerator.add_screenshot_only(self, document, "product_page_error.png", True)
             raise e
 
     def verify_added_to_cart(self, document):
         WordGenerator.add_heading(self, document, "Add to cart", level=2)
         try:
             self.ui.should_be_visible(self.ADD_TO_CART_SUCCESS_MSG)
-            WordGenerator.add_screenshot_only(self, document, "add_to_cart.png")
+            WordGenerator.add_screenshot_only(self, document, "add_to_cart.png", True)
             self.ui.click(self.VIEW_CART_LINK)
             logging.info("Click on view cart link")
-            WordGenerator.add_screenshot_with_description(self, document, "Product added to cart successfully", "cart_page.png")
+            WordGenerator.add_screenshot_with_description(self, document, "Product added to cart successfully", "cart_page.png", True)
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to view cart link", level=2)
-            WordGenerator.add_screenshot_only(self, document, "view_cart.png")
+            WordGenerator.add_screenshot_only(self, document, "view_cart.png", True)
             raise e
 
     def proceed_to_checkout(self, document, comment):
         WordGenerator.add_heading(self, document, "Proceed to checkout", level=2)
         try:
             self.ui.should_be_visible(self.PROCEED_TO_CHECKOUT_BTN)
-            WordGenerator.add_screenshot_only(self, document, "proceed_to_checkout.png")
+            WordGenerator.add_screenshot_only(self, document, "proceed_to_checkout.png", True)
             self.ui.click(self.PROCEED_TO_CHECKOUT_BTN)
             logging.info("Click on proceed button")
             self.ui.fill(self.COMMENT_BOX, comment)
             logging.info(f"Fill comment with {comment}")
-            WordGenerator.add_screenshot_only(self, document, "comment.png")
+            WordGenerator.add_screenshot_only(self, document, "comment.png", True)
             self.ui.click(self.PLACE_ORDER_BTN)
             logging.info("Click on place order button")
             WordGenerator.add_screenshot_with_description(self, document,
                                                           "Product added to cart and proceeded to checkout",
-                                                          "product_page.png")
+                                                          "product_page.png", True)
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to place order button", level=2)
-            WordGenerator.add_screenshot_only(self, document, "place_order.png")
+            WordGenerator.add_screenshot_only(self, document, "place_order.png", True)
             raise e
 
     def buy_product_by_category(self, category, subcategory, document):
@@ -154,7 +154,7 @@ class ProductPage:
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to buy product by category", level=2)
-            WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
+            WordGenerator.add_screenshot_only(self, document, "product_page_error.png", True)
             raise e
 
     def buy_product_by_brand(self, brand, document):
@@ -192,7 +192,7 @@ class ProductPage:
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to buy product by brand", level=2)
-            WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
+            WordGenerator.add_screenshot_only(self, document, "product_page_error.png", True)
             raise e
 
     def delete_from_cart(self, document):
@@ -202,9 +202,9 @@ class ProductPage:
             logging.info(f"Click on delete cart button")
             self.ui.should_be_visible(self.EMPTY_CART_MSG)
             empty_cart_msg = self.ui.get_text(self.EMPTY_CART_MSG)
-            WordGenerator.add_screenshot_with_description(self, document, f"{empty_cart_msg}", "delete_from_cart.png")
+            WordGenerator.add_screenshot_with_description(self, document, f"{empty_cart_msg}", "delete_from_cart.png", True)
         except Exception as e:
             logging.error(e)
             WordGenerator.add_heading_fail(self, document, "Failed to delete from cart", level=2)
-            WordGenerator.add_screenshot_only(self, document, "product_page_error.png")
+            WordGenerator.add_screenshot_only(self, document, "product_page_error.png", True)
             raise e
