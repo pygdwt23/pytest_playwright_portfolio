@@ -10,6 +10,7 @@ from pages.product_page import ProductPage
 from pages.payment_page import PaymentPage
 from utils.ui_actions import UIActions
 from utils.word_generator import WordGenerator
+from utils.send_email import EmailSender
 from faker import Faker
 import random
 from pathlib import Path
@@ -121,3 +122,12 @@ def test_end_to_end(page, test_data):
         doc = docx.Document(doc_report_name)
         doc.save(doc_report_name)
         logging.info(f"Successfully generated report: {doc_report_name}")
+
+        send_email = EmailSender()
+        send_email.send_report(
+            to="pygdwt@gmail.com",
+            test_name=f"END TO END - {testcase}",
+            status=remarks,
+            report_path=doc_report_name,
+            extra_body=f"Dear recipient,\n\nPlease find attached the test report for your recent test execution.\n\nBest regards,\nQA Team"
+        )

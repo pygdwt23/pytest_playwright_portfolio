@@ -2,6 +2,8 @@ import pytest
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from utils.config_loader import ConfigLoader
+from dotenv import load_dotenv
+load_dotenv()
 
 brave_path = "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
 PROJECT_ROOT = Path(__file__).parent.parent
