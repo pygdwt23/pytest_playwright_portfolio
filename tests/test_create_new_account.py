@@ -8,12 +8,17 @@ import openpyxl
 from pages.auth_page import AuthPage
 from utils.ui_actions import UIActions
 from utils.word_generator import WordGenerator
+from utils.send_email import EmailSender
+from pathlib import Path
 from faker import Faker
 import random
 fake = Faker()
 
 output_data_path = './testdata/testdata_input.xlsx'
 sheet_name = 'registration'
+PROJECT_ROOT = Path(__file__).parent.parent
+DOWNLOAD_DIR = PROJECT_ROOT / "downloads"
+ALLURE_DIR = PROJECT_ROOT / "allure-reports"
 logging = logging.getLogger(__name__)
 
 
@@ -32,6 +37,8 @@ def test_create_new_account(page, test_data):
 
     WordGenerator.clear_temp_screenshot(path="screenshots/")
     WordGenerator.clear_temp_words(path="reports/")
+    WordGenerator.clear_downloaded_files(path=DOWNLOAD_DIR)
+    WordGenerator.clear_downloaded_files(path=ALLURE_DIR)
 
     try:
         #=== Test Data ===#
@@ -104,7 +111,7 @@ def test_create_new_account(page, test_data):
             mobile = fake.phone_number()
 
         #=== Steps ===#
-        document = WordGenerator.start_document(page)
+        document = WordGenerator.start_document(page, test_data)
         auth_page = AuthPage(page)
         auth_page.signup(name, email, document)
         firstname, lastname, company, address, state, zipcode, mobile = auth_page.app_form(password, title, birth_date, birth_month, birth_year, newsletter, offers, firstname, lastname, company, address, country, state, zipcode, mobile, email, document)
@@ -145,3 +152,12 @@ def test_create_new_account(page, test_data):
         doc = docx.Document(doc_report_name)
         doc.save(doc_report_name)
         logging.info(f"Successfully generated report: {doc_report_name}")
+
+        send_email = EmailSender()
+        send_email.send_report(
+            to="pygdwt@gmail.com",
+            test_name=f"ACCOUNT REGISTRATION - {testcase}",
+            status=remarks,
+            report_path=doc_report_name,
+            extra_body=f"Dear recipient,\n\nPlease find attached the test report for your recent test execution.\n\nBest regards,\nQA Team"
+        )
